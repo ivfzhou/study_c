@@ -12,7 +12,7 @@ CFLAGS = -std=c18 -finput-charset=UTF-8 -fexec-charset=UTF-8 --all-warnings -ped
 	-Wno-unused-variable
 
 TARGET = main
-SOURCES = align.c array.c assert.c bit_field.c bitwise.c bitwise_negation.c const.c enum.c flow_statement.c func.c \
+SOURCES = alignment.c array.c assertion.c bit_field.c bitwise.c bitwise_negation.c const.c enumeration.c flow_statement.c func.c \
 	generic.c io.c macro.c main.c sort.c string.c struct.c type.c typedef.c union.c varargs.c variable_scope.c \
 	xor_codec.c
 OBJECTS = $(SOURCES:.c=.o)

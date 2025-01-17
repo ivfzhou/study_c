@@ -24,7 +24,7 @@ extern double test_varargs();
 extern int *test_block_static_var();
 
 int main(const int argv, const char *argc[]) {
-    test_assert();
+
     printf("OK 完成\n");
     return 0;
 }

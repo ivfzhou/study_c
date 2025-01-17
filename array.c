@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 // 数组
 void test_array() {
@@ -45,7 +46,7 @@ void test_array() {
     printf("the number of bytes in arr[2][3] + 1 is %llu and sizeof(int[3]) is %zd\n",
            (unsigned long long)((uintptr_t)(arr + 1) - (uintptr_t)arr), sizeof(int[3])); // 表示加 sizeof(int[3])
     printf("the number of bytes in arr[0] + 1 is %llu and sizeof(int) is %zd\n",
-           (uintptr_t)(arr[0] + 1) - (uintptr_t)arr[0], sizeof(int)); // 表示加 sizeof(int)
+           (unsigned long long)((uintptr_t)(arr[0] + 1) - (uintptr_t)arr[0]), sizeof(int)); // 表示加 sizeof(int)
 
     printf("\n===\n\n");
 
