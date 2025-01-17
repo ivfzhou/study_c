@@ -7,7 +7,8 @@ CC = gcc
 # -Winline：启用关于内联函数的警告。
 # -O2：优化级别设置。
 # -Dxxx=xxx：定义预处理宏。
-CFLAGS = -std=c18 -finput-charset=utf-8 -fexec-charset=utf-8 --all-warnings -pedantic -Winline -O2 -Wall -g3
+# -Wno-unused：禁用所有未使用的警告（包括函数、参数等）。
+CFLAGS = -std=c18 -finput-charset=UTF-8 -fexec-charset=UTF-8 --all-warnings -pedantic -Winline -O2 -Wall -g3 -Wno-unused-variable
 
 TARGET = main
 SOURCES = align.c array.c assert.c bit_field.c bitwise.c bitwise_negation.c const.c enum.c flow_statement.c func.c \
