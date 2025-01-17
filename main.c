@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "enumeration.h"
+
 extern void test_align();
 extern void test_array();
 extern void test_assert();
@@ -22,7 +24,7 @@ extern double test_varargs();
 extern int *test_block_static_var();
 
 int main(const int argv, const char *argc[]) {
-
-    printf("OK\n");
+    test_assert();
+    printf("OK 完成\n");
     return 0;
 }
