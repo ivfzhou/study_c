@@ -44,4 +44,4 @@ clean:
 	@$(CLEAN_COMAND)
 
 run: all
-	@$(TARGET)
+	@./$(TARGET)
