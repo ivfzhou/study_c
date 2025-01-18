@@ -18,7 +18,12 @@ SOURCES = alignment.c array.c assertion.c bit_field.c bitwise.c bitwise_negation
 OBJECTS = $(SOURCES:.c=.o)
 
 ifeq ($(OS), Windows_NT)
-	CLEAN_COMAND=del /Q $(OBJECTS) $(TARGET).exe;
+	res = $(shell sh.exe --version > /dev/null 2>&1 && echo 1 || echo 0)
+	ifeq ($(res), 1)
+		CLEAN_COMAND=rm -f $(OBJECTS) $(TARGET);
+	else
+		CLEAN_COMAND=del /Q $(OBJECTS) $(TARGET).exe;
+	endif
 else
 	CLEAN_COMAND=rm -f $(OBJECTS) $(TARGET);
 endif
