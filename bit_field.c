@@ -1,29 +1,36 @@
 #include <stdio.h>
 
-#include "bitwise.h"
+extern void print_bit_field_layout_left_to_right_reverse(unsigned char*, size_t);
 
 // 位字段
 void test_bit_field() {
     // C 以 unsigned int 作为位字段结构的基本布局单元，分配的内存为 int 长度的倍数。
-    struct data {
-        int b : 2;
-        int : 7; // 间隙
+    // 实测表现，内存布局中前 21 位为填充，接着 2 位是 c 的，接着 7 位为填充，接着 2 位是 a 的。
+    struct has_bit_field {
+        int a : 2;
+        int  : 7; // 间隙
         int c : 2;
     };
 
-    printf("%zu\n", sizeof(struct data)); // 4
+    printf("sizeof(struct has_bit_field) is %zu\n", sizeof(struct has_bit_field));
 
-    struct data d = {};
-    bit_print(&d, sizeof(d)); // 00000000_00000000_00000000_00000000
-    d.b = -1;
-    d.c = -1;
-    bit_print(&d, sizeof(d)); // 00000011_00000110_00000000_00000000
+    struct has_bit_field s = {0};
+    printf("print bit layout ");
+    print_bit_field_layout_left_to_right_reverse((unsigned char*)&s, sizeof(s));
 
-    unsigned char* c = (unsigned char*)&d; // 加一就是加一个字节
-    *c = 1;
-    printf("%d\n", d.b); // 1
-    bit_print(&d, sizeof(d)); // 00000001_00000110_00000000_00000000
-    *(c + 1) = 4;
-    printf("%d\n", d.c); // 1
-    bit_print(&d, sizeof(d)); // 00000001_00000100_00000000_00000000
+    s.a = 1;
+    s.c = -1;
+    printf("print bit layout ");
+    print_bit_field_layout_left_to_right_reverse((unsigned char*)&s, sizeof(s));
+
+    unsigned char* ptr = (unsigned char*)&s;
+    *ptr = 1;
+    printf("s.a is %d\n", s.a);
+    printf("print bit layout ");
+    print_bit_field_layout_left_to_right_reverse((unsigned char*)&s, sizeof(s));
+
+    *(ptr + 1) = 4; // 加一就是加一个字节。
+    printf("s.c is %d\n", s.c);
+    printf("print bit layout ");
+    print_bit_field_layout_left_to_right_reverse((unsigned char*)&s, sizeof(s));
 }
