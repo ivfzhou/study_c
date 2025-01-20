@@ -6,6 +6,7 @@ SOURCES = bitwise_negation.c main.c
 HEADERS = bitwise_negation.h
 OBJECTS = $(SOURCES:.c=.o)
 TARGET = bitwise_negation
+PREFIX ?= /usr/local
 
 CLEAN_COMMAND = rm -f $(OBJECTS) $(TARGET) lib_$(TARGET).a;
 ifeq ($(OS), Windows_NT)
@@ -21,13 +22,13 @@ build:
 	@$(CC) $(CFLAGS_RELEASE) -o $(TARGET) $(SOURCES)
 	@$(CC) $(CFLAGS_RELEASE) -c -o lib_$(TARGET).a $(subst main.c,,$(SOURCES))
 install: build
-	@sudo cp lib_$(TARGET).a /usr/local/lib/
-	@sudo cp $(TARGET) /usr/local/bin/
-	@sudo cp $(HEADERS) /usr/local/include/
+	@sudo cp lib_$(TARGET).a $(PREFIX)/lib/
+	@sudo cp $(TARGET) $(PREFIX)/bin/
+	@sudo cp $(HEADERS) $(PREFIX)/include/
 uninstall:
-	@sudo rm -f /usr/local/lib/lib_$(TARGET).a
-	@sudo rm -f /usr/local/bin/$(TARGET)
-	@for f in $(TARGET); do sudo rm -f /usr/local/include/$$f.h; done
+	@sudo rm -f $(PREFIX)/lib/lib_$(TARGET).a
+	@sudo rm -f $(PREFIX)/bin/$(TARGET)
+	@for f in $(TARGET); do sudo rm -f $(PREFIX)/include/$$f.h; done
 clean:
 	@$(CLEAN_COMMAND)
 test:
