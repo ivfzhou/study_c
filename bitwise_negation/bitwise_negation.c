@@ -4,7 +4,7 @@
 
 #include "bitwise_negation.h"
 
-void bitwise_negation(const char* filename) {
+int bitwise_negation(const char* filename) {
     printf("process file %s\n", filename);
     FILE* file = fopen(filename, "r+b");
     if (!file) {
@@ -12,7 +12,7 @@ void bitwise_negation(const char* filename) {
         char msg[strlen(msg_part1) + strlen(filename) + 1];
         sprintf(msg, "%s%s", msg_part1, filename);
         perror(msg);
-        exit(EXIT_FAILURE);
+        return 1;
     }
     const size_t buf_len = 128 * 1024;
     char buf[buf_len];
@@ -21,7 +21,7 @@ void bitwise_negation(const char* filename) {
         if (ferror(file)) {
             perror("failed to read file data");
             fclose(file);
-            exit(EXIT_FAILURE);
+            return 1;
         }
         if (len <= 0) break;
 
@@ -30,24 +30,26 @@ void bitwise_negation(const char* filename) {
         if (fseek(file, -(long)len, SEEK_CUR)) {
             perror("failed to seek file position");
             fclose(file);
-            exit(EXIT_FAILURE);
+            return 1;
         }
         if (fwrite(buf, sizeof(char), len, file) != len) {
             perror("failed to write file data");
             fclose(file);
-            exit(EXIT_FAILURE);
+            return 1;
         }
         if (fflush(file) == EOF) {
             perror("failed to flush file");
             fclose(file);
-            exit(EXIT_FAILURE);
+            return 1;
         }
 
         if (len < buf_len) break;
     }
     if (fclose(file) == EOF) {
         perror("failed to close file");
-        exit(EXIT_FAILURE);
+        return 1;
     }
+
     printf("process successfully\n");
+    return 0;
 }
