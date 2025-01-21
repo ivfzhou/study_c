@@ -1,5 +1,5 @@
 CC = gcc
-TARGET = xor_codec
+TARGET = bitwise
 PREFIX ?= /usr/local
 CFLAGS_DEBUG = -std=c18 -finput-charset=UTF-8 -fexec-charset=UTF-8 --all-warnings -pedantic -Winline -O0 -Wall -g3 \
 	-Wno-unused-variable -Wno-unused-function

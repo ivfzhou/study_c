@@ -12,7 +12,7 @@ CFLAGS = -std=c18 -finput-charset=UTF-8 -fexec-charset=UTF-8 --all-warnings -ped
 	-Wno-unused-variable -Wno-unused-function
 
 TARGET = main
-SOURCES = alignment.c array.c assertion.c bit_field.c bitwise.c const.c enumeration.c flow_statement.c func.c \
+SOURCES = alignment.c array.c assertion.c bit_field.c const.c enumeration.c flow_statement.c func.c \
 	generic.c io.c macro.c sort.c string.c struct.c type.c typedef.c union.c varargs.c variable_scope.c main.c
 OBJECTS = $(SOURCES:.c=.o)
 DEL_PARAMETERS = $(OBJECTS) $(TARGET).exe
@@ -28,7 +28,7 @@ ifeq ($(OS), Windows_NT)
 	endif
 endif
 
-.PHONY: debug clean
+.PHONY: debug clean all
 
 debug: $(TARGET)
 # 编译每个源代码。
@@ -39,3 +39,7 @@ $(TARGET): $(OBJECTS)
 	@$(CC) $(CFLAGS) -o $@ $^
 clean:
 	@$(CLEAN_COMMAND)
+all: debug
+# $(foreach f, $(SOURCES), \
+#		$(CC) $(CFLAGS_RELEASE) -c -o $(basename $f).o $f \
+#	)
