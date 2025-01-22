@@ -4,59 +4,125 @@
 线性表：顺序实现、单/双/环链式实现、静态实现、字符串、KMP 模式匹配算法、栈、队列。
 
 # 测试
+
 ```shell
-make testall
+make test
 ```
 
 # 构建
 
+```shell
+make build
+make install PREFIX=/usr/local/
+```
+
 # 接口
 
-线性表实现
-```shell
-list.c array_list.c linked_list.c double_linked_list.c static_linked_list.c circle_linked_list.c string.c stack.c
-```
+## 线性表
+
 ```c
-#include "list.h"
-ListImplType_Array, // 数组实现（推荐）
-ListImplType_Linked, // 链表实现
-ListImplType_DoubleLinked, // 双向链表实现（推荐）
-ListImplType_StaticLinked, // 静态链表实现
-ListImplType_CircleLinked // 环链表实现
+#include <list.h>
 
-int list_new(List *list, size_t elemSize, ListImplType type);
-int list_free(List *list);
-int list_len(const List *list, int *length);
-int list_get(const List *list, int index, void *elem);
-int list_insert(List *list, int index, const void *elem);
-int list_del(List *list, int index);
-int list_locate(const List *list, ListElemComparer cmp, const void *elem, int *index);
-int list_travel(const List *list, ListElemVisitor visit);
-int list_clear(List *list);
-int list_rpop(List *list, void *elem);
-int list_lpush(List *list, const void *elem);
-int list_rpush(List *list, const void *elem);
-int list_lpop(List *list, void *elem);
-int list_set(const List *list, int index, const void *elem);
-int list_getDel(List *list, int index, void *elem);
-int list_getSet(const List *list, int index, void *elem);
-int list_fprint(const List *list, FILE *f, ListElemToString str, size_t sizeOfElem);
+// 初始化线性表。
+// list：指针地址将被设置为初始化的线性表。
+// elemSize：线性表中每个元素占用的空间字节数。
+// impl：使用哪种实现。
+list* list_alloc(size_t elemSize, list_impl_type type);
 
-#include "string.h"
-String *string_new(const char *c);
-String *string_concat(const String *s1, const String *s2);
-size_t string_len(const String *s);
-size_t string_index(const String *s, const String *sub);
-String *string_sub(const String *s, int begin, int end);
-void string_del(String *s);
-int string_compare(const String *s1, const String *s2);
-int string_fprint(const String *s, FILE *f)
+// 销毁线性表。
+// list：线性表对象。
+void list_free(list* list);
 
-#include "stack.h"
-void stack_push(Stack *s, const void *elem);
-void stack_pop(Stack *s, void *elem);
-_Bool stack_isEmpty(const Stack *s);
-Stack *stack_new(size_t sizeOfElem);
-void stack_del(Stack *s);
-int stack_peekTop(const Stack *s, void *elem)
+// 获取线性表元素个数。
+// list：线性表对象。
+// length：将被设置为线性表长度值。
+size_t list_len(const list* list);
+
+// 获取线性表某个位置上的元素。
+// list：线性表对象。
+// index：元素在线性表的下表值。
+// elem：将被设置为元素值。
+// 返回1: 越界。
+int list_get(const list* list, size_t index, void* elem);
+
+// 把元素添加到线性表上的某个位置。
+// list：线性表对象。
+// index：元素在线性表的下表值。
+// elem：插入的元素。
+// 返回1: 越界。
+int list_insert(list* list, size_t index, const void* elem);
+
+// 删除线性表某个位置上的元素。
+// list：线性表对象。
+// index：元素在线性表的下表值。
+// 返回1: 越界。
+int list_del(list* list, size_t index);
+
+// 找到元素在线性表上的位置。
+// list：线性表对象。
+// cmp：比较函数。
+// elem：要定位的元素。
+// index：元素下表将被设置。
+// 返回1: 未找到。
+int list_locate(const list* list, list_elem_comparer cmp, const void* elem, size_t* index);
+
+// 遍历线性表元素。
+// list：线性表对象。
+// visit：遍历函数。
+int list_travel(const list* list, list_elem_visitor visit);
+
+// 重置线性表。
+// list：操作对象。
+int list_clear(list* list);
+
+// 获取线性表尾部元素并删除。
+// list：线性表对象。
+// elem：将被设置为元素值。
+// 返回1: 越界。
+int list_rpop(list* list, void* elem);
+
+// 向线性表首部插入元素。
+// list：线性表对象。
+// elem：被插入的元素。
+int list_lpush(list* list, const void* elem);
+
+// 在线性表尾部插入元素。
+// list：线性表对象。
+// elem：被插入的元素。
+int list_rpush(list* list, const void* elem);
+
+// 弹出线性表首部元素。
+// list：线性表对象。
+// elem：将被设置为弹出的元素值。
+// 返回1: 越界。
+int list_lpop(list* list, void* elem);
+
+// 设置线性表上指定位置的元素
+// list：线性表对象。
+// index：下表。
+// elem：元素。
+// 返回1: 越界。
+int list_set(const list* list, size_t index, const void* elem);
+
+// 获取线性表上指定位置的元素并从表上删除。
+// list：线性表对象。
+// index：下表。
+// elem：元素。
+// 返回1: 越界。
+int list_getdel(list* list, size_t index, void* elem);
+
+// 获取线性表上指定位置的元素并设置新元素。
+// list：线性表对象。
+// index：下表。
+// getElem：获取的元素。
+// setElem：设置的元素。
+// 返回1: 越界。
+int list_getset(const list* list, size_t index, void* elem);
+
+// 打印输入线性表元素
+// list：线性表对象。
+// f：输入对象。
+// str：转字符串函数。
+// size_of_elem：元素字符串至少占用的字节数。
+int list_fprint(const list* list, FILE* f, list_elem_to_string str, size_t size_of_elem);
 ```

@@ -17,23 +17,23 @@
 #include "linked_list.h"
 #include "static_linked_list.h"
 
-list* list_alloc(size_t elemSize, list_impl_type type) {
+list* list_alloc(size_t elem_size, list_impl_type type) {
     list* list = malloc(sizeof(list));
     switch (type) {
     case list_impl_type_array:
-        list->impl = array_list_alloc(elemSize);
+        list->impl = array_list_alloc(elem_size);
         break;
     case list_impl_type_linked:
-        list->impl = linked_list_alloc(elemSize);
+        list->impl = linked_list_alloc(elem_size);
         break;
     case list_impl_type_double_linked:
-        list->impl = double_linked_list_alloc(elemSize);
+        list->impl = double_linked_list_alloc(elem_size);
         break;
     case list_impl_type_static_linked:
-        list->impl = static_linked_list_alloc(elemSize);
+        list->impl = static_linked_list_alloc(elem_size);
         break;
     case list_impl_type_circle_linked:
-        list->impl = circle_linked_list_alloc(elemSize);
+        list->impl = circle_linked_list_alloc(elem_size);
         break;
     default:
         return NULL;
@@ -305,18 +305,18 @@ int list_getset(const list* list, size_t index, void* elem) {
     }
 }
 
-int list_fprint(const list* list, FILE* f, list_elem_to_string str, size_t sizeOfElem) {
+int list_fprint(const list* list, FILE* f, list_elem_to_string str, size_t size_of_elem) {
     switch (list->type) {
     case list_impl_type_array:
-        return array_list_fprint(list->impl, f, str, sizeOfElem);
+        return array_list_fprint(list->impl, f, str, size_of_elem);
     case list_impl_type_linked:
-        return linked_list_fprint(list->impl, f, str, sizeOfElem);
+        return linked_list_fprint(list->impl, f, str, size_of_elem);
     case list_impl_type_double_linked:
-        return double_linked_list_fprint(list->impl, f, str, sizeOfElem);
+        return double_linked_list_fprint(list->impl, f, str, size_of_elem);
     case list_impl_type_static_linked:
-        return static_linked_list_fprint(list->impl, f, str, sizeOfElem);
+        return static_linked_list_fprint(list->impl, f, str, size_of_elem);
     case list_impl_type_circle_linked:
-        return circle_linked_list_fprint(list->impl, f, str, sizeOfElem);
+        return circle_linked_list_fprint(list->impl, f, str, size_of_elem);
     default:
         return 1;
     }

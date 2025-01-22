@@ -45,9 +45,9 @@ typedef size_t list_elem_to_string(void* elem, char* s);
 
 // 初始化线性表。
 // list：指针地址将被设置为初始化的线性表。
-// elemSize：线性表中每个元素占用的空间字节数。
+// elem_size：线性表中每个元素占用的空间字节数。
 // impl：使用哪种实现。
-list* list_alloc(size_t elemSize, list_impl_type type);
+list* list_alloc(size_t elem_size, list_impl_type type);
 
 // 销毁线性表。
 // list：线性表对象。
@@ -143,7 +143,7 @@ int list_getset(const list* list, size_t index, void* elem);
 // list：线性表对象。
 // f：输入对象。
 // str：转字符串函数。
-// sizeOfElem：元素字符串至少占用的字节数。
-int list_fprint(const list* list, FILE* f, list_elem_to_string str, size_t sizeOfElem);
+// size_of_elem：元素字符串至少占用的字节数。
+int list_fprint(const list* list, FILE* f, list_elem_to_string str, size_t size_of_elem);
 
 #endif
