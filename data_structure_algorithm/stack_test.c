@@ -13,22 +13,22 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "stack.c"
+#include "stack.h"
 
 int main(void) {
-    Stack *s = stack_alloc(sizeof(int), 10);
+    stack* s = stack_alloc(sizeof(int), 10);
     assert(s);
-    assert(stack_isEmpty(s));
+    assert(stack_isempty(s));
     int elem = 1;
     stack_push(s, &elem);
     elem = 2;
     stack_push(s, &elem);
     stack_pop(s, &elem);
     assert(elem == 2);
-    assert(!stack_peekTop(s, &elem));
+    assert(!stack_peektop(s, &elem));
     assert(elem == 1);
     stack_pop(s, &elem);
     assert(elem == 1);
-    assert(stack_isEmpty(s));
+    assert(stack_isempty(s));
     stack_free(s);
 }

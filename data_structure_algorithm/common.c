@@ -12,20 +12,20 @@
 
 #include <stdlib.h>
 
-void *pointerAdd(void *p1, size_t delta) {
-    unsigned long long ptr = (unsigned long long) p1;
+void* pointer_add(void* p1, const size_t delta) {
+    uintptr_t ptr = (uintptr_t)p1;
     ptr += delta;
-    return (void *) ptr;
+    return (void*)ptr;
 }
 
-void *pointerMinus(void *p, size_t delta) {
-    unsigned long long ptr = (unsigned long long) p;
+void* pointer_minus(void* p, size_t delta) {
+    uintptr_t ptr = (uintptr_t)p;
     ptr -= delta;
-    return (void *) ptr;
+    return (void*)ptr;
 }
 
-unsigned long long pointerDiff(void *p0, void *p1) {
-    unsigned long long ptr0 = (unsigned long long) p0;
-    unsigned long long ptr1 = (unsigned long long) p1;
+unsigned long long pointer_diff(void* p0, void* p1) {
+    const uintptr_t ptr0 = (uintptr_t)p0;
+    const uintptr_t ptr1 = (uintptr_t)p1;
     return ptr0 - ptr1;
 }

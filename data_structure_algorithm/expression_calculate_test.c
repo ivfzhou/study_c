@@ -10,65 +10,126 @@
  * See the Mulan PSL v2 for more details.
  */
 
-// 算术表达式运算
+// 算术表达式运算。
 
 #include <string.h>
 #include <signal.h>
 #include <assert.h>
 #include <stdio.h>
 
-#include "stack.c"
+#include "stack.h"
 
-static _Bool isOperator(char c);
+static _Bool is_operator(char c) {
+    const static char operators[] = "+-*/()";
+    int i = 0;
+    char o;
+    while ((o = operators[i++])) if (c == o) return 1;
+    return 0;
+}
 
-static int isPrecede(char s1, char s2);
+static int is_precede(char s1, char s2) {
+    if (!s1) return -1;
+    switch (s1) {
+    case '+':
+    case '-':
+        switch (s2) {
+        case '+':
+        case '-':
+        case ')':
+            return 1;
+        case '/':
+        case '(':
+        case '*':
+            return -1;
+        }
+        break;
+    case '/':
+    case '*':
+        switch (s2) {
+        case '+':
+        case '-':
+        case ')':
+            return 1;
+        case '(':
+        case '/':
+        case '*':
+            return -1;
+        }
+        break;
+    case '(':
+        switch (s2) {
+        case ')':
+            return 0;
+        default:
+            return -1;
+        }
+    case ')':
+        return 1;
+    }
+    raise(SIGABRT);
+    return 0;
+}
 
-static long double calculate(long double x, char optr, long double y);
+static long double calculate(long double x, char optr, long double y) {
+    switch (optr) {
+    case '+':
+        return x + y;
+    case '-':
+        return x - y;
+    case '/':
+        return x / y;
+    case '*':
+        return x * y;
+    }
+    raise(SIGABRT);
+    return 0;
+}
 
-long double expression_calculate(const char *expr) {
-    Stack *operator = stack_alloc(sizeof(char), 1024);
-    Stack *operand = stack_alloc(sizeof(long double), 1024);
+long double expression_calculate(const char* expr) {
+    stack* operator = stack_alloc(sizeof(char), 1024);
+    stack* operand = stack_alloc(sizeof(long double), 1024);
 
     size_t len = strlen(expr);
     for (int i = 0; i < len; i++) {
         char c = expr[i];
-        if (!isOperator(c)) {
+        if (!is_operator(c)) {
             char tmp[] = {c, '\0'};
             long double num = strtold(tmp, NULL);
             stack_push(operand, &num);
-        } else {
+        }
+        else {
             char optr;
-            if (stack_peekTop(operator, &optr)) optr = '\0';
-            switch (isPrecede(optr, c)) {
-                case 1:
-                    stack_pop(operator, &optr);
-                    long double x, y;
-                    stack_pop(operand, &x);
-                    stack_pop(operand, &y);
-                    long double res = calculate(y, optr, x);
+            if (stack_peektop(operator, &optr)) optr = '\0';
+            switch (is_precede(optr, c)) {
+            case 1:
+                stack_pop(operator, &optr);
+                long double x, y;
+                stack_pop(operand, &x);
+                stack_pop(operand, &y);
+                long double res = calculate(y, optr, x);
 
-                    // 去除括号
-                    if (c == ')') {
-                        stack_pop(operator, &optr);
-                        if (optr != '(') {
-                            fprintf(stderr, "括号不匹配");
-                            raise(SIGALRM);
-                        }
+            // 去除括号
+                if (c == ')') {
+                    stack_pop(operator, &optr);
+                    if (optr != '(') {
+                        fprintf(stderr, "括号不匹配");
+                        raise(SIGABRT);
                     }
+                }
 
-                    stack_push(operand, &res);
-                    break;
-                case -1:
-                    stack_push(operator, &c);
-                    break;
-                case 0:
-                    stack_pop(operator, &optr);
-                    break;
+                stack_push(operand, &res);
+                break;
+            case -1:
+                stack_push(operator, &c);
+                break;
+            case 0:
+                stack_pop(operator, &optr);
+                break;
             }
         }
     }
 
-    while (!stack_isEmpty(operator)) {
+    while (!stack_isempty(operator)) {
         char optr;
         stack_pop(operator, &optr);
         long double x, y;
@@ -81,80 +142,14 @@ long double expression_calculate(const char *expr) {
     long double count = 0;
     stack_pop(operand, &count);
 
-    if (!stack_isEmpty(operator) || !stack_isEmpty(operand)) {
+    if (!stack_isempty(operator) || !stack_isempty(operand)) {
         fprintf(stderr, "算式非法");
-        raise(SIGALRM);
+        raise(SIGABRT);
     }
 
     stack_free(operand);
     stack_free(operator);
     return count;
-}
-
-static _Bool isOperator(char c) {
-    const static char operators[] = "+-*/()";
-    int i = 0;
-    char o;
-    while ((o = operators[i++])) if (c == o) return 1;
-    return 0;
-}
-
-static int isPrecede(char s1, char s2) {
-    if (!s1) return -1;
-    switch (s1) {
-        case '+':
-        case '-':
-            switch (s2) {
-                case '+':
-                case '-':
-                case ')':
-                    return 1;
-                case '/':
-                case '(':
-                case '*':
-                    return -1;
-            }
-            break;
-        case '/':
-        case '*':
-            switch (s2) {
-                case '+':
-                case '-':
-                case ')':
-                    return 1;
-                case '(':
-                case '/':
-                case '*':
-                    return -1;
-            }
-            break;
-        case '(':
-            switch (s2) {
-                case ')':
-                    return 0;
-                default:
-                    return -1;
-            }
-        case ')':
-            return 1;
-    }
-    raise(SIGABRT);
-    return 0;
-}
-
-static long double calculate(long double x, char optr, long double y) {
-    switch (optr) {
-        case '+':
-            return x + y;
-        case '-':
-            return x - y;
-        case '/':
-            return x / y;
-        case '*':
-            return x * y;
-    }
-    raise(SIGABRT);
-    return 0;
 }
 
 int main(void) {

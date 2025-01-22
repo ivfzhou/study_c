@@ -8,24 +8,53 @@
 # MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 # See the Mulan PSL v2 for more details.
 
-.PHONY:
-testall: array_list_test circle_linked_list_test double_linked_list_test linked_list_test polynomial_test static_linked_list_test string_test stack_test circle_queue_test linked_queue_test list_test
+CC = gcc
+TARGET = data_structure_algorithm
+PREFIX ?= /usr/local
+CFLAGS_DEBUG = -std=c18 -finput-charset=UTF-8 -fexec-charset=UTF-8 --all-warnings -pedantic -Winline -O0 -Wall -g3
+CFLAGS_RELEASE = -std=c18 -finput-charset=UTF-8 -fexec-charset=UTF-8 -O3 -g0
+SOURCES = $(wildcard *.c)
+HEADERS = $(wildcard *.h)
+OBJECTS = $(SOURCES:.c=.o)
+BUILD_SOURCES = $(filter-out %_test.c, $(SOURCES))
+TEST_SOURCES = $(wildcard *_test.c)
+TEST_TARGETS = $(patsubst %.c,%,$(TEST_SOURCES))
+ifeq ($(OS), Windows_NT)
+	TEST_TARGETS = $(patsubst %.c,%.exe,$(TEST_SOURCES))
+endif
+BUILD_OBJECTS = $(BUILD_SOURCES:.c=.o)
+TEST_OBJECTS = $(TEST_SOURCES:.c=.o)
+LIB = lib_$(TARGET).a
+CLEAN_COMMAND = rm -f $(BUILD_OBJECTS) $(LIB) $(TEST_OBJECTS) $(TEST_TARGETS);
 
-%: %.c
-	@gcc -std=c18 --all-warnings --pedantic -finput-charset=utf-8 -fexec-charset=utf-8 $^ common.c -o $@
-	@./$@
-	@echo "$@ end"
+.PHONY: build test install uninstall all debug clean
 
-polynomial_test: polynomial_test.c list.c static_linked_list.c double_linked_list.c circle_linked_list.c linked_list.c array_list.c common.c
-	@gcc -std=c18 --all-warnings --pedantic -finput-charset=utf-8 -fexec-charset=utf-8 $^ -o polynomial_test
-	@./polynomial_test
-	@echo "polynomial_test end"
+build:
+	@for i in $(BUILD_SOURCES); do \
+		$(CC) $(CFLAGS_RELEASE) -c -o $${i%.c}.o $$i; \
+	done
+	@ar rcs $(LIB) $(BUILD_OBJECTS)
+test: build
+	@for i in $(TEST_SOURCES); do \
+		$(CC) $(CFLAGS_RELEASE) -o $${i%.c} $$i $(BUILD_OBJECTS); \
+    done
+	@for i in $(TEST_TARGETS); do \
+		echo "start running $$i"; \
+		./$$i; \
+		echo "end running $$i"; \
+	done
+install: build
+	@cp $(LIB) $(PREFIX)/lib/
+	@cp $(HEADERS) $(PREFIX)/include/
+uninstall:
+	@rm -f $(PREFIX)/lib/$(LIB)
+	@for f in $(HEADERS); do rm -f $(PREFIX)/include/$$f; done
 
-list_test: static_linked_list.c double_linked_list.c circle_linked_list.c linked_list.c array_list.c list_test.c common.c
-	@gcc -std=c18 --all-warnings --pedantic -finput-charset=utf-8 -fexec-charset=utf-8 $^ -o list_test
-	@./list_test
-	@echo "list_test end"
-
-.PHONY:
-clean: 
-	@rm *_test
+all: debug
+debug: $(TARGET)
+%.o: %.c
+	@$(CC) $(CFLAGS_DEBUG) -c -o $@ $<
+$(TARGET): $(OBJECTS)
+	@echo "do nothings"
+clean:
+	@$(CLEAN_COMMAND)

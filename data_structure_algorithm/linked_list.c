@@ -15,24 +15,53 @@
 
 #include "linked_list.h"
 
-static SingleLinkNode *getNode(const LinkedList *list, size_t index);
+static single_link_node* get_node(const linked_list* list, size_t index) {
+    single_link_node* node = list->head;
+    for (size_t i = 0; i < index; i++)
+        node = node->next;
+    return node;
+}
 
-static SingleLinkNode *newNode(size_t elemSize, const void *elem);
+static single_link_node* new_node(size_t elemSize, const void* elem) {
+    single_link_node* newNode = malloc(sizeof(single_link_node));
+    newNode->elem = malloc(elemSize);
+    memcpy(newNode->elem, elem, elemSize);
+    newNode->next = NULL;
+    return newNode;
+}
 
-static void popNode(LinkedList *list, size_t index, void *elem);
+static void pop_node(linked_list* list, size_t index, void* elem) {
+    single_link_node* delNode;
+    if (!index) {
+        // 删除首元素
+        delNode = list->head;
+        list->head = delNode->next;
+    }
+    else {
+        single_link_node* prevNode = get_node(list, index - 1);
+        delNode = prevNode->next;
+        prevNode->next = delNode->next;
+    }
 
-LinkedList *linkedList_alloc(size_t elemSize) {
-    LinkedList *list = malloc(sizeof(LinkedList));
-    list->elemSize = elemSize;
+    if (elem != NULL)
+        memcpy(elem, delNode->elem, list->elemSize);
+    free(delNode->elem);
+    free(delNode);
+    list->length--;
+}
+
+linked_list* linked_list_alloc(size_t elem_size) {
+    linked_list* list = malloc(sizeof(linked_list));
+    list->elemSize = elem_size;
     list->length = 0;
     list->head = NULL;
     return list;
 }
 
-void linkedList_free(LinkedList *list) {
-    SingleLinkNode *node = list->head;
+void linked_list_free(linked_list* list) {
+    single_link_node* node = list->head;
     for (size_t i = 0; i < list->length; i++) {
-        SingleLinkNode *next = node->next;
+        single_link_node* next = node->next;
         free(node->elem);
         free(node);
         node = next;
@@ -42,28 +71,31 @@ void linkedList_free(LinkedList *list) {
     free(list);
 }
 
-size_t linkedList_len(const LinkedList *list) {
+size_t linked_list_len(const linked_list* list) {
     return list->length;
 }
 
-int linkedList_get(const LinkedList *list, size_t index, void *elem) {
+int linked_list_get(const linked_list* list, size_t index, void* elem) {
     if (index >= list->length)
         return 1;
-    SingleLinkNode *node = getNode(list, index);
+    single_link_node* node = get_node(list, index);
     memcpy(elem, node->elem, list->elemSize);
     return 0;
 }
 
-int linkedList_insert(LinkedList *list, size_t index, const void *elem) {
+int linked_list_insert(linked_list* list, size_t index, const void* elem) {
     if (index > list->length)
         return 1;
-    SingleLinkNode *node = newNode(list->elemSize, elem);
+    single_link_node* node = new_node(list->elemSize, elem);
 
-    if (!index) { // 首部追加元素
+    if (!index) {
+        // 首部追加元素
         node->next = list->head;
         list->head = node;
-    } else { // 找到插入位置的节点并插入
-        SingleLinkNode *prevNode = getNode(list, index - 1);
+    }
+    else {
+        // 找到插入位置的节点并插入
+        single_link_node* prevNode = get_node(list, index - 1);
         node->next = prevNode->next;
         prevNode->next = node;
     }
@@ -72,13 +104,13 @@ int linkedList_insert(LinkedList *list, size_t index, const void *elem) {
     return 0;
 }
 
-int linkedList_del(LinkedList *list, size_t index) {
-    popNode(list, index, NULL);
+int linked_list_del(linked_list* list, size_t index) {
+    pop_node(list, index, NULL);
     return 0;
 }
 
-int linkedList_locate(const LinkedList *list, ListElemComparer cmp, const void *elem, size_t *index) {
-    SingleLinkNode *node = list->head;
+int linked_list_locate(const linked_list* list, list_elem_comparer cmp, const void* elem, size_t* index) {
+    single_link_node* node = list->head;
     for (size_t i = 0; i < list->length; i++) {
         if (!cmp(node->elem, elem)) {
             *index = i;
@@ -89,8 +121,8 @@ int linkedList_locate(const LinkedList *list, ListElemComparer cmp, const void *
     return 1;
 }
 
-int linkedList_travel(const LinkedList *list, ListElemVisitor visit) {
-    SingleLinkNode *node = list->head;
+int linked_list_travel(const linked_list* list, list_elem_visitor visit) {
+    single_link_node* node = list->head;
     for (size_t i = 0; i < list->length; i++) {
         visit(node->elem);
         node = node->next;
@@ -98,10 +130,10 @@ int linkedList_travel(const LinkedList *list, ListElemVisitor visit) {
     return 0;
 }
 
-int linkedList_clear(LinkedList *list) {
-    SingleLinkNode *node = list->head;
+int linked_list_clear(linked_list* list) {
+    single_link_node* node = list->head;
     for (size_t i = 0; i < list->length; i++) {
-        SingleLinkNode *next = node->next;
+        single_link_node* next = node->next;
         free(node->elem);
         free(node);
         node = next;
@@ -111,36 +143,36 @@ int linkedList_clear(LinkedList *list) {
     return 0;
 }
 
-int linkedList_rpop(LinkedList *list, void *elem) {
-    return linkedList_getDel(list, list->length - 1, elem);
+int linked_list_rpop(linked_list* list, void* elem) {
+    return linked_list_getdel(list, list->length - 1, elem);
 }
 
-int linkedList_lpush(LinkedList *list, const void *elem) {
-    return linkedList_insert(list, 0, elem);
+int linked_list_lpush(linked_list* list, const void* elem) {
+    return linked_list_insert(list, 0, elem);
 }
 
-int linkedList_rpush(LinkedList *list, const void *elem) {
-    return linkedList_insert(list, list->length, elem);
+int linked_list_rpush(linked_list* list, const void* elem) {
+    return linked_list_insert(list, list->length, elem);
 }
 
-int linkedList_lpop(LinkedList *list, void *elem) {
-    return linkedList_getDel(list, 0, elem);
+int linked_list_lpop(linked_list* list, void* elem) {
+    return linked_list_getdel(list, 0, elem);
 }
 
-int linkedList_set(LinkedList *list, size_t index, const void *elem) {
-    SingleLinkNode *node = getNode(list, index);
+int linked_list_set(linked_list* list, size_t index, const void* elem) {
+    single_link_node* node = get_node(list, index);
     memcpy(node->elem, elem, list->elemSize);
     return 0;
 }
 
-int linkedList_getDel(LinkedList *list, size_t index, void *elem) {
-    popNode(list, index, elem);
+int linked_list_getdel(linked_list* list, size_t index, void* elem) {
+    pop_node(list, index, elem);
     return 0;
 }
 
-int linkedList_getSet(LinkedList *list, size_t index, void *elem) {
-    SingleLinkNode *node = getNode(list, index);
-    void *tmp = malloc(list->elemSize);
+int linked_list_getset(linked_list* list, size_t index, void* elem) {
+    single_link_node* node = get_node(list, index);
+    void* tmp = malloc(list->elemSize);
     memcpy(tmp, node->elem, list->elemSize);
     memcpy(node->elem, elem, list->elemSize);
     memcpy(elem, tmp, list->elemSize);
@@ -148,10 +180,10 @@ int linkedList_getSet(LinkedList *list, size_t index, void *elem) {
     return 0;
 }
 
-int linkedList_fprint(const LinkedList *list, FILE *f, ListElemToString str, size_t sizeOfElem) {
+int linked_list_fprint(const linked_list* list, FILE* f, list_elem_to_string str, size_t size_of_elem) {
     fprintf(f, "[");
-    char s[sizeOfElem + 1];
-    SingleLinkNode *node = list->head;
+    char s[size_of_elem + 1];
+    single_link_node* node = list->head;
     for (int i = 0; i < list->length - 1 && list->length; i++) {
         size_t len = str(node->elem, s);
         s[len] = '\0';
@@ -165,37 +197,4 @@ int linkedList_fprint(const LinkedList *list, FILE *f, ListElemToString str, siz
     }
     fprintf(f, "]");
     return 0;
-}
-
-static SingleLinkNode *getNode(const LinkedList *list, size_t index) {
-    SingleLinkNode *node = list->head;
-    for (size_t i = 0; i < index; i++)
-        node = node->next;
-    return node;
-}
-
-static SingleLinkNode *newNode(size_t elemSize, const void *elem) {
-    SingleLinkNode *newNode = malloc(sizeof(SingleLinkNode));
-    newNode->elem = malloc(elemSize);
-    memcpy(newNode->elem, elem, elemSize);
-    newNode->next = NULL;
-    return newNode;
-}
-
-static void popNode(LinkedList *list, size_t index, void *elem) {
-    SingleLinkNode *delNode;
-    if (!index) { // 删除首元素
-        delNode = list->head;
-        list->head = delNode->next;
-    } else {
-        SingleLinkNode *prevNode = getNode(list, index - 1);
-        delNode = prevNode->next;
-        prevNode->next = delNode->next;
-    }
-
-    if (elem != NULL)
-        memcpy(elem, delNode->elem, list->elemSize);
-    free(delNode->elem);
-    free(delNode);
-    list->length--;
 }

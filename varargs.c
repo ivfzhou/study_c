@@ -1,7 +1,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-double test_varargs(int paramn, ...) {
+static int sum(int paramn, ...) {
     va_list args;
     va_start(args, paramn);
     int sum = 0;
@@ -9,14 +9,18 @@ double test_varargs(int paramn, ...) {
         int d = va_arg(args, int);
         sum += d;
     }
-    printf("sum = %d\n", sum);
 
+    // 复制再使用。
     va_list args_copy;
     va_copy(args_copy, args);
     va_start(args_copy, paramn);
-    // do
     va_end(args_copy);
 
     va_end(args);
     return sum;
+}
+
+void test_varargs() {
+    int res = sum(3, 1, 1, 1);
+    printf("res is %d\n", res);
 }

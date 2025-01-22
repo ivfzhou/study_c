@@ -14,47 +14,25 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "list.c"
+#include "list.h"
 
 #define TEST_LENGTH 40000
 
-static int intCmp(const void *o1, const void *o2);
-
-static void intVisitor(void *p);
-
-static void testListImpl(ListImplType);
-
-int main(void) {
-    time_t now = time(NULL);
-
-    srand(now + 100);
-    // time_t begin = time(NULL);
-    testListImpl(ListImplType_Array);
-    // printf("array list cost %fs\n", difftime(time(NULL), begin));
-
-    srand(now + 100);
-    // begin = time(NULL);
-    testListImpl(ListImplType_DoubleLinked);
-    // printf("double linked list cost %fs\n", difftime(time(NULL), begin));
-
-    srand(now + 100);
-    // begin = time(NULL);
-    testListImpl(ListImplType_CircleLinked);
-    // printf("circle linked list cost %fs\n", difftime(time(NULL), begin));
-
-    srand(now + 100);
-    // begin = time(NULL);
-    testListImpl(ListImplType_Linked);
-    // printf("linked list cost %fs\n", difftime(time(NULL), begin));
-
-    srand(now + 100);
-    // begin = time(NULL);
-    testListImpl(ListImplType_StaticLinked);
-    // printf("static linked list cost %fs\n", difftime(time(NULL), begin));
+static void int_visitor(void* p) {
+    int i = *(int*)p;
+    assert(i > 0);
 }
 
-static void testListImpl(ListImplType type) {
-    List *list = list_alloc(sizeof(int), type);
+static int int_cmp(const void* o1, const void* o2) {
+    int* n1 = (int*)o1;
+    int* n2 = (int*)o2;
+    if (*n1 == *n2)
+        return 0;
+    return o1 > o2 ? 1 : -1;
+}
+
+static void test_list_impl(list_impl_type type) {
+    list* list = list_alloc(sizeof(int), type);
     assert(list);
 
     int elem = 2;
@@ -67,7 +45,7 @@ static void testListImpl(ListImplType type) {
     elem = 3;
     assert(!list_rpush(list, &elem));
 
-    assert(!list_travel(list, intVisitor));
+    assert(!list_travel(list, int_visitor));
 
     size_t length = list_len(list);
     assert(length == 3);
@@ -79,14 +57,14 @@ static void testListImpl(ListImplType type) {
     assert(elem == 4);
 
     elem = 3;
-    assert(!list_locate(list, intCmp, &elem, &index));
+    assert(!list_locate(list, int_cmp, &elem, &index));
     assert(index == 2);
 
     elem = 4;
-    assert(!list_getSet(list, index, &elem));
+    assert(!list_getset(list, index, &elem));
     assert(elem == 3);
 
-    assert(!list_getDel(list, index, &elem));
+    assert(!list_getdel(list, index, &elem));
     assert(elem == 4);
 
     assert(!list_lpop(list, &elem));
@@ -114,15 +92,31 @@ static void testListImpl(ListImplType type) {
     list_free(list);
 }
 
-static int intCmp(const void *o1, const void *o2) {
-    int *n1 = (int *) o1;
-    int *n2 = (int *) o2;
-    if (*n1 == *n2)
-        return 0;
-    return o1 > o2 ? 1 : -1;
-}
+int main(void) {
+    time_t now = time(NULL);
 
-static void intVisitor(void *p) {
-    int i = *(int *) p;
-    assert(i > 0);
+    srand(now + 100);
+    // time_t begin = time(NULL);
+    test_list_impl(list_impl_type_array);
+    // printf("array list cost %fs\n", difftime(time(NULL), begin));
+
+    srand(now + 100);
+    // begin = time(NULL);
+    test_list_impl(list_impl_type_double_linked);
+    // printf("double linked list cost %fs\n", difftime(time(NULL), begin));
+
+    srand(now + 100);
+    // begin = time(NULL);
+    test_list_impl(list_impl_type_circle_linked);
+    // printf("circle linked list cost %fs\n", difftime(time(NULL), begin));
+
+    srand(now + 100);
+    // begin = time(NULL);
+    test_list_impl(list_impl_type_linked);
+    // printf("linked list cost %fs\n", difftime(time(NULL), begin));
+
+    srand(now + 100);
+    // begin = time(NULL);
+    test_list_impl(list_impl_type_static_linked);
+    // printf("static linked list cost %fs\n", difftime(time(NULL), begin));
 }

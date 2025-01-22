@@ -10,7 +10,7 @@ struct S {
     double c;
 };
 
-void test_align() {
+void test_alignment() {
     printf("_Alignof(int) is %zd\n", _Alignof(int)); // 4
     char _Alignas(8) c = 'a'; // 使 c 的对齐值是 8，地址会是 8 的整数倍。
     printf("sizeof(c) is %zd\n", sizeof(c)); // 1

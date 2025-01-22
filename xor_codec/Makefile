@@ -1,40 +1,40 @@
 CC = gcc
-CFLAGS = -std=c18 -finput-charset=UTF-8 -fexec-charset=UTF-8 --all-warnings -pedantic -Winline -O0 -Wall -g3 \
-	-Wno-unused-variable -Wno-unused-function
-CFLAGS_RELEASE = -std=c18 -finput-charset=UTF-8 -fexec-charset=UTF-8 -O3 -g0
-SOURCES = xor_codec.c main.c
-HEADERS = xor_codec.h
-OBJECTS = $(SOURCES:.c=.o)
 TARGET = xor_codec
 PREFIX ?= /usr/local
+CFLAGS_DEBUG = -std=c18 -finput-charset=UTF-8 -fexec-charset=UTF-8 --all-warnings -pedantic -Winline -O0 -Wall -g3
+CFLAGS_RELEASE = -std=c18 -finput-charset=UTF-8 -fexec-charset=UTF-8 -O3 -g0
+SOURCES = $(wildcard *.c)
+HEADERS = $(wildcard *.h)
+OBJECTS = $(SOURCES:.c=.o)
+LIB = lib_$(TARGET).a
+CLEAN_COMMAND = rm -f $(OBJECTS) $(TARGET) $(LIB);
 
-CLEAN_COMMAND = rm -f $(OBJECTS) $(TARGET) lib_$(TARGET).a;
 ifeq ($(OS), Windows_NT)
-	HAS_SH = $(shell sh.exe --version > NUL 2>&1 && echo 1 || echo 0)
-	ifeq ($(HAS_SH), 0)
-		CLEAN_COMMAND = del /Q  $(OBJECTS) $(TARGET).exe lib_$(TARGET).a;
-	endif
+	CLEAN_COMMAND = rm -f $(OBJECTS) $(TARGET).exe $(LIB);
 endif
 
-.PHONY: build install uninstall clean test debug
+.PHONY: build test install uninstall all debug clean
 
 build:
-	@$(CC) $(CFLAGS_RELEASE) -o $(TARGET) $(SOURCES)
-	@$(CC) $(CFLAGS_RELEASE) -c -o lib_$(TARGET).a $(subst main.c,,$(SOURCES))
-install: build
-	@sudo cp lib_$(TARGET).a $(PREFIX)/lib/
-	@sudo cp $(TARGET) $(PREFIX)/bin/
-	@sudo cp $(HEADERS) $(PREFIX)/include/
-uninstall:
-	@sudo rm -f $(PREFIX)/lib/lib_$(TARGET).a
-	@sudo rm -f $(PREFIX)/bin/$(TARGET)
-	@for f in $(TARGET); do sudo rm -f $(PREFIX)/include/$$f.h; done
-clean:
-	@$(CLEAN_COMMAND)
+	@for i in $(SOURCES); do \
+		$(CC) $(CFLAGS_RELEASE) -c -o $${i%.c}.o $$i; \
+	done
+	@ar rcs $(LIB) $(subst main.o,,$(OBJECTS))
+	@$(CC) $(CFLAGS_RELEASE) -o $(TARGET) $(OBJECTS)
 test:
-	@echo do nothing
+	@echo "do nothing"
+install: build
+	@cp $(LIB) $(PREFIX)/lib/
+	@cp $(HEADERS) $(PREFIX)/include/
+uninstall:
+	@rm -f $(PREFIX)/lib/$(LIB)
+	@for f in $(HEADERS); do rm -f $(PREFIX)/include/$$f; done
+
+all: debug
 debug: $(TARGET)
 %.o: %.c
-	@$(CC) $(CFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS_DEBUG) -c -o $@ $<
 $(TARGET): $(OBJECTS)
-	@$(CC) $(CFLAGS) -o $@ $^
+	@$(CC) $(CFLAGS_DEBUG) -o $@ $^
+clean:
+	@$(CLEAN_COMMAND)

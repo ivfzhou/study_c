@@ -1,6 +1,5 @@
 #include <stdio.h>
-
-extern void print_bit_field_layout_left_to_right_reverse(unsigned char*, size_t);
+#include "bitwise/bitwise.h"
 
 // 位字段
 void test_bit_field() {

@@ -17,40 +17,40 @@
 
 #include "circle_queue.h"
 
-extern void *pointerAdd(void *p1, size_t delta);
+extern void* pointer_add(void* p1, size_t delta);
 
-CircleQueue *circleQueue_alloc(size_t elemSize, size_t queueLength) {
-    if (queueLength >= ULLONG_MAX) raise(SIGABRT);
-    CircleQueue *queue = malloc(sizeof(CircleQueue));
-    queue->elemSize = elemSize;
-    queue->length = queueLength;
-    queue->array = malloc(elemSize * queueLength);
+circle_queue* circle_queue_alloc(const size_t elem_size, const size_t queue_length) {
+    if (queue_length >= ULLONG_MAX) raise(SIGABRT);
+    circle_queue* queue = malloc(sizeof(circle_queue));
+    queue->elem_size = elem_size;
+    queue->length = queue_length;
+    queue->array = malloc(elem_size * queue_length);
     queue->head = queue->tail = 0;
     return queue;
 }
 
-int circleQueue_into(CircleQueue *queue, const void *elem) {
+int circle_queue_into(circle_queue* queue, const void* elem) {
     if (queue == NULL) return 2;
     if ((queue->head - queue->tail) >= queue->length) return 1;
-    memcpy(pointerAdd(queue->array, (queue->head % queue->length) * queue->elemSize), elem, queue->elemSize);
+    memcpy(pointer_add(queue->array, (queue->head % queue->length) * queue->elem_size), elem, queue->elem_size);
     queue->head++;
     return 0;
 }
 
-int circleQueue_exit(CircleQueue *queue, void *elem) {
+int circle_queue_exit(circle_queue* queue, void* elem) {
     if (queue == NULL) return 2;
     if (queue->tail == queue->head) return 1;
-    memcpy(elem, pointerAdd(queue->array, (queue->tail % queue->length) * queue->elemSize), queue->elemSize);
+    memcpy(elem, pointer_add(queue->array, (queue->tail % queue->length) * queue->elem_size), queue->elem_size);
     queue->tail++;
     return 0;
 }
 
-void circleQueue_free(CircleQueue *queue) {
+void circle_queue_free(circle_queue* queue) {
     free(queue->array);
     free(queue);
 }
 
-size_t circleQueue_len(const CircleQueue *queue) {
+size_t circle_queue_len(const circle_queue* queue) {
     if (queue == NULL) return 0;
     return queue->head - queue->tail;
 }

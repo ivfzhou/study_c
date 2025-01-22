@@ -13,19 +13,20 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "linked_queue.c"
+#include "linked_queue.h"
 
 int main(void) {
-    LinkedQueue *queue = linkedQueue_alloc(sizeof(int));
+    linked_queue* queue = linked_queue_alloc(sizeof(int));
     assert(queue);
 
-    for (int i = 100; i > 0; i--) assert(!linkedQueue_into(queue, &i));
-    assert(linkedQueue_len(queue) == 100);
+    for (int i = 100; i > 0; i--)
+        assert(!linked_queue_into(queue, &i));
+    assert(linked_queue_len(queue) == 100);
     for (int i = 100; i > 0; i--) {
         int tmp;
-        assert(!linkedQueue_exit(queue, &tmp));
+        assert(!linked_queue_exit(queue, &tmp));
         assert(tmp == i);
     }
 
-    linkedQueue_free(queue);
+    linked_queue_free(queue);
 }

@@ -13,23 +13,23 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "circle_queue.c"
+#include "circle_queue.h"
 
 int main(void) {
-    CircleQueue *queue = circleQueue_alloc(sizeof(int), 10);
+    circle_queue* queue = circle_queue_alloc(sizeof(int), 10);
     int elem;
     for (int i = 0; i < 10; i++) {
         elem = i + 1;
-        assert(!circleQueue_into(queue, &elem));
-        assert(circleQueue_len(queue) == i + 1);
+        assert(!circle_queue_into(queue, &elem));
+        assert(circle_queue_len(queue) == i + 1);
     }
-    assert(circleQueue_into(queue, &elem) == 1);
+    assert(circle_queue_into(queue, &elem) == 1);
 
     for (int i = 0; i < 10; i++) {
-        assert(!circleQueue_exit(queue, &elem));
+        assert(!circle_queue_exit(queue, &elem));
         assert(elem == 1 + i);
-        assert(circleQueue_len(queue) == 9 - i);
+        assert(circle_queue_len(queue) == 9 - i);
     }
-    assert(circleQueue_exit(queue, &elem) == 1);
-    circleQueue_free(queue);
+    assert(circle_queue_exit(queue, &elem) == 1);
+    circle_queue_free(queue);
 }
