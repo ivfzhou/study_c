@@ -36,7 +36,7 @@ extern void test_varargs();
 
 extern void test_variable();
 
-void test_cast() {
+static void test_cast() {
     const char c = 5;
     char result_char = (char)~c;
     char result_int = ~c;
@@ -47,7 +47,7 @@ void test_cast() {
     print_bit_field_layout_left_to_right_reverse((unsigned char*)&result_int, sizeof(char));
 }
 
-void test_scanf() {
+static void test_scanf() {
     // scanf 遇到空格字符串就结束，末尾自动加 \0，而 gets 换行才算字符串结束。
     char x[3];
     int res = scanf("%2s", x);
