@@ -54,22 +54,22 @@ void test_macro() {
     printf("__TIME__ is %s\n", __TIME__);
 
     // 条件编译
-#ifdef GOOD
-#else
-#endif
+    #ifdef GOOD
+    #else
+    #endif
 
-#ifndef GOOD
-#else
-#endif
+    #ifndef GOOD
+    #else
+    #endif
 
-#undef GOOD
+    #undef GOOD
 
-#if GOOD == 1
-#elif GOOD == 0
-#else
-#endif
+    #if GOOD == 1
+    #elif GOOD == 0
+    #else
+    #endif
 
-#if defined(GOOD)
-#elif defined(GOOD)
-#endif
+    #if defined(GOOD)
+    #elif defined(GOOD)
+    #endif
 }
