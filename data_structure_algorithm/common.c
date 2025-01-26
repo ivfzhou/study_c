@@ -11,6 +11,7 @@
  */
 
 #include <stdlib.h>
+#include <stdint.h>
 
 void* pointer_add(void* p1, const size_t delta) {
     uintptr_t ptr = (uintptr_t)p1;
