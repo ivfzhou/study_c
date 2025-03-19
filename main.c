@@ -56,6 +56,7 @@ static void test_scanf() {
 }
 
 int main(const int argv, const char* argc[]) {
+
     printf("OK 完成\n");
     return 0;
 }

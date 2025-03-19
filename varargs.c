@@ -21,6 +21,6 @@ static int sum(int paramn, ...) {
 }
 
 void test_varargs() {
-    int res = sum(3, 1, 1, 1);
+    int res = sum(4, 1, 1, 1);
     printf("res is %d\n", res);
 }

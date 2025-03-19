@@ -1,6 +1,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <locale.h>
+#include <stddef.h>
+#include <wchar.h>
 
 // 字符串。
 void test_string() {

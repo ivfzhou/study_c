@@ -11,7 +11,7 @@ PI"                                              // 包含了此行。
 #define PRINT(p, ...) printf(p, __VA_ARGS__)     // 变参宏。
 #define GOOD                                     // 空宏。
 #line 1000                                       // 把当前行号重置为 1000。
-#line 24 "macro_reset.c"                                // 把行号重置为 10，把文件名重置为 cool.c。
+#line 24 "macro_reset.c"                         // 把行号重置为 10，把文件名重置为 cool.c。
 #pragma message "Hello"                          // 编译器指令。
 // #pragma STDC CX_LIMITED_RANGE ON // 使用普通的数学公式。
 // #error compile error // 终止编译。

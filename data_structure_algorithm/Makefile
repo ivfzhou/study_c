@@ -44,7 +44,9 @@ test: build
 		echo "end running $$i"; \
 	done
 install: build
+	@mkdir -p $(PREFIX)/lib/
 	@cp $(LIB) $(PREFIX)/lib/
+	@mkdir -p $(PREFIX)/include/
 	@cp $(HEADERS) $(PREFIX)/include/
 uninstall:
 	@rm -f $(PREFIX)/lib/$(LIB)

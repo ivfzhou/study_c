@@ -42,7 +42,7 @@ size_t list_len(const list* list);
 // list：线性表对象。
 // index：元素在线性表的下表值。
 // elem：将被设置为元素值。
-// 返回1: 越界。
+// 返回 1: 越界。
 int list_get(const list* list, size_t index, void* elem);
 
 // 把元素添加到线性表上的某个位置。
@@ -63,7 +63,7 @@ int list_del(list* list, size_t index);
 // cmp：比较函数。
 // elem：要定位的元素。
 // index：元素下表将被设置。
-// 返回1: 未找到。
+// 返回 1: 未找到。
 int list_locate(const list* list, list_elem_comparer cmp, const void* elem, size_t* index);
 
 // 遍历线性表元素。
@@ -116,7 +116,7 @@ int list_getdel(list* list, size_t index, void* elem);
 // index：下表。
 // getElem：获取的元素。
 // setElem：设置的元素。
-// 返回1: 越界。
+// 返回 1: 越界。
 int list_getset(const list* list, size_t index, void* elem);
 
 // 打印输入线性表元素

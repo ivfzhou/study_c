@@ -24,8 +24,11 @@ build:
 test:
 	@echo "do nothing"
 install: build
+	@mkdir -p $(PREFIX)/lib/
 	@cp $(LIB) $(PREFIX)/lib/
+	@mkdir -p $(PREFIX)/bin/
 	@cp $(TARGET) $(PREFIX)/bin/
+	@mkdir -p $(PREFIX)/include/
 	@cp $(HEADERS) $(PREFIX)/include/
 uninstall:
 	@rm -f $(PREFIX)/lib/$(LIB)
